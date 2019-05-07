@@ -23,6 +23,10 @@ module.exports = {
     toWei: (eth) => {
       return web3.utils.toWei(eth);
     },
+
+    fromWei: (stringWithLoadsOfZeros) => {
+      return web3.utils.fromWei(stringWithLoadsOfZeros);
+    },
    
     expectThrow: async promise => {
       try {

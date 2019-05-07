@@ -37,19 +37,33 @@ contract TrustlessTokenTransferTrade {
         emit ExchangeRateUpdated(rate);
     }
 
+    event Log(string text);
+    event LogNumbers(uint tokensOwned, uint msgValue);
+    event LogNumber(uint howMuch);
+
     function() external payable {
+        emit Log("fallback function");
+
+
         require(msg.value > 0, "Need to send ETH");
         uint tokensToSend = msg.value * rate;
         uint tokensOwned = token.balanceOf(address(this));
 
         if (tokensOwned >= tokensToSend) {
+            emit Log("within limits");
+
             token.transfer(msg.sender, tokensToSend); // sending tokens to sender
             owner.transfer(msg.value); // sending ETH to owner
             emit Trade(msg.value, tokensToSend, rate);
         } else { // not have enough tokens, send everything and refund the remainng ETH
+            emit LogNumbers(tokensOwned, msg.value);
+
             tokensToSend = tokensOwned;
             uint tokensToSendETHValue = tokensToSend / rate;
             uint refundValue = msg.value - tokensToSendETHValue;
+
+            emit Log("Refund value");
+            emit LogNumber(refundValue);
             msg.sender.transfer(refundValue);
             token.transfer(msg.sender, tokensToSend);
             owner.transfer(tokensToSendETHValue);
@@ -60,6 +74,10 @@ contract TrustlessTokenTransferTrade {
     // TODO: Maybe SelfDestruct? What if I want to reuse it?
     function withdraw(address recipient, uint amount) public onlyOwner {
         token.transfer(recipient, amount);
+    }
+
+    function getBalance() public view returns(uint) {
+        return address(this).balance;
     }
 
 }
