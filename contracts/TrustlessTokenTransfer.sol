@@ -3,7 +3,7 @@ pragma solidity ^0.5.0;
 import "./SafeMath.sol";
 import "./ERC20.sol";
 
-contract TrustlessTokenTranfer {
+contract TrustlessTokenTransfer {
 
     using SafeMath for uint256;
 

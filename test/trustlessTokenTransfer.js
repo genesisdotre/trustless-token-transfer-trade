@@ -1,21 +1,24 @@
-const { expectThrow } = require('./expectThrow')
+const { expectThrow, increaseTime } = require('./helpers')
 
-const TrustlessTokenTransfer = artifacts.require('./TrustlessTokenTranfer.sol')
-const ERC20 = artifacts.require('/ERC20.sol')
+const TrustlessTokenTransfer = artifacts.require('TrustlessTokenTransfer')
+const ERC20 = artifacts.require('ERC20')
   
 contract('TrustlessTokenTransfer', async function(accounts) {
     const creator = accounts[0]
     const guy1 = accounts[1];
     const guy2 = accounts[2];
-    const guy3 = accounts[3]; // internet troll who is disputing a submission
+    const guy3 = accounts[3];
     const ETH = 10**18;
+    const day = 24 * 60 * 60;
 
+    let now;
     let tradeableToken;
     let trustless;
 
     beforeEach(async function() {
+        now = await latestTime();
         tradeableToken = await ERC20.new({ from: creator } );
-        trustless = await TrustlessTokenTransfer.new(tradeableToken.address, 20000, { from: creator } );
+        trustless = await TrustlessTokenTransfer.new(tradeableToken.address, 20000, now + day, { from: creator } );
     })
   
     it('Should create a first challenge and craete two submissions', async () => {
