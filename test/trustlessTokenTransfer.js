@@ -26,59 +26,48 @@ contract('TrustlessTokenTransferTrade', async function(accounts) {
     })
 
     it('Simple use case 1', async () => {
-        rate = 1; // 1 ETH gets you 1 token
+        rate = 1;
         tttt = await TrustlessTokenTransferTrade.new(tradeableToken.address, rate, now + day, { from: creator } );
         await tradeableToken.mint(tttt.address, toWei("1"), { from: creator }); 
 
         await tttt.sendTransaction({ value: toWei("0.5"), from: guy1 });
-        let guy1TokenBalance = web3.utils.fromWei(await tradeableToken.balanceOf.call(guy1));
+        let guy1TokenBalance = fromWei(await tradeableToken.balanceOf.call(guy1));
         assert.equal(guy1TokenBalance, 0.5 * rate, "guy 1 should get the correct");
 
         await tttt.sendTransaction({ value: toWei("1"), from: guy2 });
-        let guy2TokenBalance = web3.utils.fromWei(await tradeableToken.balanceOf.call(guy1));
+        let guy2TokenBalance = fromWei(await tradeableToken.balanceOf.call(guy1));
         assert.equal(guy2TokenBalance, 0.5 * rate, "guy 2 should get the correct");
 
-        let guy2ETHbalane = parseInt(fromWei(await web3.eth.getBalance(guy2)));
-        assert.equal(guy2ETHbalane, 99.5, "guy 2 should have ETH refunded back");
+        let guy2ETHbalance = parseFloat(fromWei(await web3.eth.getBalance(guy2)));
+        assert.closeTo(guy2ETHbalance, 99.5, 0.05, "guy 2 should have ETH refunded back");
     });
 
-
-  
-    it('Simple use case n', async () => {
+    it('Simple use case 2', async () => {
         let rate = 20000; // 1 ETH gets you that much of the token
 
         tttt = await TrustlessTokenTransferTrade.new(tradeableToken.address, rate, now + day, { from: creator } );
         await tradeableToken.mint(tttt.address, toWei("100000"), { from: creator }); 
 
-        let creatorETHBalanceBefore = parseInt(fromWei(await web3.eth.getBalance(creator)));
+        let creatorETHBalanceBefore = parseFloat(fromWei(await web3.eth.getBalance(creator)));
 
         await tttt.sendTransaction({ value: toWei("0.6"), from: guy1 });
-        let guy1TokenBalance = web3.utils.fromWei(await tradeableToken.balanceOf.call(guy1));
+        let guy1TokenBalance = fromWei(await tradeableToken.balanceOf.call(guy1));
         assert.equal(guy1TokenBalance, 0.6 * rate, "guy 1 should get the correct");
 
         await tttt.sendTransaction({ value: toWei("4"), from: guy2 });
-        let guy2TokenBalance = web3.utils.fromWei(await tradeableToken.balanceOf.call(guy2));
+        let guy2TokenBalance = fromWei(await tradeableToken.balanceOf.call(guy2));
         assert.equal(guy2TokenBalance, 4 * rate, "guy 2 should get the correct");
 
-        let guy3ETHbalanceBefore = parseInt(fromWei(await web3.eth.getBalance(guy3)));
+        let guy3ETHbalanceBefore = parseFloat(fromWei(await web3.eth.getBalance(guy3)));
         await tttt.sendTransaction({ value: toWei("1"), from: guy3 });
-        let guy3TokenBalance = web3.utils.fromWei(await tradeableToken.balanceOf.call(guy3));
+        let guy3TokenBalance = fromWei(await tradeableToken.balanceOf.call(guy3));
         assert.equal(guy3TokenBalance, 0.4 * rate, "guy 3 should get the correct");
-        let guy3ETHbalanceAfter = parseInt(fromWei(await web3.eth.getBalance(guy3)));
+        let guy3ETHbalanceAfter = parseFloat(fromWei(await web3.eth.getBalance(guy3)));
         
+        assert.closeTo(guy3ETHbalanceBefore, guy3ETHbalanceAfter + 0.4, 0.05, "guy 3 shuold have the ETH refunded");
 
-
-        // console.log(balanceBefore);
-        // console.log("string");
-        // console.log(0.4*ETH)
-        // console.log(12345)
-        // console.log(balanceBefore + 0.4*ETH)
-
-
-        assert.closeTo(guy3ETHbalanceBefore, guy3ETHbalanceAfter + 0.4, 0.01, "guy 3 shuold have the ETH refunded");
-
-        let creatorETHBalanceAfter = parseInt(fromWei(await web3.eth.getBalance(creator)));
-        assert.closeTo(creatorETHBalanceBefore + 5, creatorETHBalanceAfter, 0.01, "creator should have earned 5 ETH in the process");
+        let creatorETHBalanceAfter = parseFloat(fromWei(await web3.eth.getBalance(creator)));
+        assert.closeTo(creatorETHBalanceBefore + 5, creatorETHBalanceAfter, 0.05, "creator should have earned 5 ETH in the process");
     });
 
     // it('Simple use case 2', async () => {

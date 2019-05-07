@@ -54,7 +54,7 @@ contract ERC20 {
     return allowed[_owner][_spender];
   }
 
-  function mint(address _to, uint256 _amount) public returns (bool) {
+  function mint(address _to, uint256 _amount) public returns (bool) { // YES, anyone can mint
     totalSupply_ = totalSupply_.add(_amount);
     balances[_to] = balances[_to].add(_amount);
     return true;
