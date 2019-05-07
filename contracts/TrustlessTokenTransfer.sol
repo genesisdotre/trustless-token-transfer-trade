@@ -3,10 +3,11 @@ pragma solidity ^0.5.0;
 import "./SafeMath.sol";
 import "./ERC20.sol";
 
-contract TrustlessTokenTransfer {
+contract TrustlessTokenTransferTrade {
 
     using SafeMath for uint256;
 
+    event Trade(uint ETH, uint tokens, uint rate); // THINK: rate can be derived. THINK: more code, defensive coding, capturing bugs OR more code, more surface for error?
     event ExchangeRateUpdated(uint rate);
     ERC20 public token;
     uint public rate;
@@ -44,6 +45,7 @@ contract TrustlessTokenTransfer {
         if (tokensOwned >= tokensToSend) {
             token.transfer(msg.sender, tokensToSend); // sending tokens to sender
             owner.transfer(msg.value); // sending ETH to owner
+            emit Trade(msg.value, tokensToSend, rate);
         } else { // not have enough tokens, send everything and refund the remainng ETH
             tokensToSend = tokensOwned;
             uint tokensToSendETHValue = tokensToSend / rate;
@@ -51,6 +53,7 @@ contract TrustlessTokenTransfer {
             msg.sender.transfer(refundValue);
             token.transfer(msg.sender, tokensToSend);
             owner.transfer(tokensToSendETHValue);
+            emit Trade(tokensToSendETHValue, tokensToSend, rate);
         }
     }
 
