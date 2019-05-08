@@ -1,0 +1,14 @@
+body {
+	background: black;
+	color: white;
+	font-family: monospace;
+	font-size: 16px;
+}
+
+a {
+	color: yellow;
+}
+
+strong {
+	font-size: 1.2em;
+}
