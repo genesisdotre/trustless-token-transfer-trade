@@ -22,17 +22,19 @@ module.exports = {
       });
     },
    
-    mineBlock: () => {
-      web3.currentProvider.send({jsonrpc: "2.0", method: "evm_mine"})
-    }, 
+    // THESE ARE NOT USED IN THIS TEST SUITE
+    
+    // mineBlock: () => {
+    //   web3.currentProvider.send({jsonrpc: "2.0", method: "evm_mine"})
+    // }, 
    
-    getBlockByNumber: () => {
-      return web3.currentProvider.send({jsonrpc: "2.0", method: "eth_getBlockByNumber", params: ["latest", true]})
-    }, 
+    // getBlockByNumber: () => {
+    //   return web3.currentProvider.send({jsonrpc: "2.0", method: "eth_getBlockByNumber", params: ["latest", true]})
+    // }, 
    
-    getTransactionReceipt: hash => {
-      return web3.currentProvider.send({jsonrpc: "2.0", method: "eth_getTransactionReceipt", params: [hash]})
-    },
+    // getTransactionReceipt: hash => {
+    //   return web3.currentProvider.send({jsonrpc: "2.0", method: "eth_getTransactionReceipt", params: [hash]})
+    // },
 
     latestTime: async () => {
       const block = await web3.eth.getBlock('latest')
@@ -60,17 +62,5 @@ module.exports = {
    
       assert.fail('Expected throw not received')
     },
-   
-    waitForMined: tx => {
-      return new Promise((resolve, reject) => {
-        let setIntervalId = setInterval(() => web3.eth.getTransactionReceipt(tx, (err, receipt) => {
-          if (err) reject(err.message)
-          if (receipt) {
-            clearInterval(setIntervalId)
-            resolve(receipt)
-          }
-        }), 1000)
-      })
-    }
    
 }

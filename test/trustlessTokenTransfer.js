@@ -71,12 +71,39 @@ contract('TrustlessTokenTransferTrade', async function(accounts) {
 
         await increaseTime(day);
 
-        await tttt.updateRate(toWei(rate.toString()), await latestTime() + 3600, { from: creator });
+        await expectThrow( tttt.sendTransaction({ value: toWei("0.5"), from: guy1 }) ); // rate no longer valid
 
-        await tttt.sendTransaction({ value: toWei("0.5"), from: guy1 });
+        let newRate = 2;
+
+        await tttt.updateRate(newRate, await latestTime() + 3600, { from: creator });
+
+        await tttt.sendTransaction({ value: toWei("0.2"), from: guy1 });
 
         let guy1TokenBalance = fromWei(await tradeableToken.balanceOf.call(guy1));
-        assert.equal(guy1TokenBalance, 0.5 * rate, "guy 1 should get the correct");
+        assert.equal(guy1TokenBalance, 0.2 * newRate, "guy 1 should get the correct amount");
+
+
+        let trustlessTokenBalance = fromWei(await tradeableToken.balanceOf.call(tttt.address));
+        assert.equal(trustlessTokenBalance, 0.6, "balance of the contract should be OK");
+
+    });
+
+
+    it('Only owner can change the rate', async () => {
+        let rate = 1;
+        tttt = await TrustlessTokenTransferTrade.new(tradeableToken.address, rate, now + day, { from: creator } );
+
+        await expectThrow( tttt.updateRate(666, now, { from: guy1 }) ); // cannot update, only creator can
+
+        let newRate = 2;
+        tttt.updateRate(newRate, now + 1500, { from: creator });
+
+        let retrievedRate = await tttt.rate.call();
+        let retrievedValidTo = await tttt.validTo.call();
+
+        assert.equal(retrievedRate, 2, "Rate should be updated");
+        assert.equal(retrievedValidTo, now + 1500, "ValidTo should be updated");
+
     });
 
   })

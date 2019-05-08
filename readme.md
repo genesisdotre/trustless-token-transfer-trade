@@ -7,7 +7,25 @@ https://medium.com/@pintail/uniswap-a-good-deal-for-liquidity-providers-104c0b68
 
 
 
-Some issues https://github.com/ethereum/web3.js/issues/2077#issuecomment-490027735
+Some issues: https://github.com/ethereum/web3.js/issues/2077#issuecomment-490027735
+
+More issues: https://github.com/trufflesuite/truffle/issues/1994
+
+Extra caution with the way how you interpret numbers.
+
+JavaScript is losing precision:
+
+`parseInt("1000000000000000000001") === parseInt("1000000000000000000000")`
+
+That's why using BigNumber
+
+That's why sometimes passing numbers as strings.
+
+`toWei`, `fromWei`, `parseInt`, `parseFloat` I made a silly error when writing tests.
+
+The Solidity contract was working fine at all time. It was the JavaScript test that was failing.
+
+
 
 ```
 $ truffle version
