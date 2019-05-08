@@ -7,7 +7,7 @@ contract TrustlessTokenTransferTrade {
 
     using SafeMath for uint256;
 
-    event Trade(uint ETH, uint tokens, uint rate); // THINK: rate can be derived. THINK: more code, defensive coding, capturing bugs OR more code, more surface for error?
+    event Trade(uint ETH, uint tokens, uint rate); // THINK: rate can be derived.
     event ExchangeRateUpdated(uint rate);
     ERC20 public token;
     uint public rate;
@@ -31,44 +31,36 @@ contract TrustlessTokenTransferTrade {
         updateRate(_rate, _validTo);
     }
 
-    function updateRate(uint _rate, uint _validTo) public {
+    function updateRate(uint _rate, uint _validTo) public onlyOwner {
         rate = _rate;
         validTo = _validTo;
         emit ExchangeRateUpdated(rate);
     }
 
-    event Log(string text);
-    event LogNumbers(uint tokensOwned, uint msgValue);
-    event LogNumber(uint howMuch);
-
     function() external payable {
-        emit Log("fallback function");
-
-
         require(msg.value > 0, "Need to send ETH");
+        require(isRateValid(), "Rate is no longer valid");
         uint tokensToSend = msg.value * rate;
         uint tokensOwned = token.balanceOf(address(this));
 
         if (tokensOwned >= tokensToSend) {
-            emit Log("within limits");
-
             token.transfer(msg.sender, tokensToSend); // sending tokens to sender
             owner.transfer(msg.value); // sending ETH to owner
             emit Trade(msg.value, tokensToSend, rate);
         } else { // not have enough tokens, send everything and refund the remainng ETH
-            emit LogNumbers(tokensOwned, msg.value);
-
             tokensToSend = tokensOwned;
             uint tokensToSendETHValue = tokensToSend / rate;
             uint refundValue = msg.value - tokensToSendETHValue;
 
-            emit Log("Refund value");
-            emit LogNumber(refundValue);
             msg.sender.transfer(refundValue);
             token.transfer(msg.sender, tokensToSend);
             owner.transfer(tokensToSendETHValue);
             emit Trade(tokensToSendETHValue, tokensToSend, rate);
         }
+    }
+
+    function isRateValid() public view returns(bool) {
+        return validTo > now;
     }
 
     // TODO: Maybe SelfDestruct? What if I want to reuse it?
