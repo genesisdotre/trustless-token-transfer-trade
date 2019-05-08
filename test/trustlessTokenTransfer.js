@@ -9,6 +9,7 @@ contract('TrustlessTokenTransferTrade', async function(accounts) {
     const guy2 = accounts[2];
     const guy3 = accounts[3];
     const day = 24 * 60 * 60;
+    const ETH = 1e18;
 
     let now;
     let tradeableToken;
@@ -38,7 +39,6 @@ contract('TrustlessTokenTransferTrade', async function(accounts) {
 
     it('Simple use case 2', async () => {
         let rate = 20000; 
-
         tttt = await TrustlessTokenTransferTrade.new(tradeableToken.address, rate, now + day, { from: creator } );
         await tradeableToken.mint(tttt.address, toWei("100000"), { from: creator }); 
 
@@ -103,7 +103,36 @@ contract('TrustlessTokenTransferTrade', async function(accounts) {
 
         assert.equal(retrievedRate, 2, "Rate should be updated");
         assert.equal(retrievedValidTo, now + 1500, "ValidTo should be updated");
+    });
+
+    it('Should allow withdrawing tokens', async () => {
+        tttt = await TrustlessTokenTransferTrade.new(tradeableToken.address, 1000, now + day, { from: creator } );
+        await tradeableToken.mint(tttt.address, toWei("1000000"), { from: creator }); 
+
+        let creatorETHBalanceBefore = fromWei(await web3.eth.getBalance(creator));
+        await tttt.sendTransaction({ value: toWei("1"), from: guy1 }); 
+
+        // I mint 1m tokens
+        // 1 ETH = 1k 
+        // guy1 sends 1ETH, so will receive 1k tokens
+        // The owner should receive 1 ETH from that transaction
+        // The owner should receive 999k tokens when refunded
+
+        let guy1TokenBalance = await tradeableToken.balanceOf.call(guy1);
+        assert.equal(toWei("1000"), guy1TokenBalance, "guy 1 should receive tokens");
+
+        await expectThrow( tttt.withdraw( { from: guy1 }) );  // cannot withdraw, only owner can
+        await expectThrow( tttt.sendTransaction( { from: guy1 }) );  // cannot send empty transaction, needs to have value
+
+        await tttt.withdraw( { from: creator });
+
+        let creatorTokenBalance = fromWei(await tradeableToken.balanceOf.call(creator));
+        assert.equal(999000, creatorTokenBalance, "creator should receive withdrawn tokens");
+
+        let creatorETHBalanceAfter = fromWei(await web3.eth.getBalance(creator));
+        assert.closeTo(parseFloat(creatorETHBalanceBefore) + 1, parseFloat(creatorETHBalanceAfter), 0.01 * ETH, "creator should get 1 ETH more than initially");
 
     });
+
 
   })

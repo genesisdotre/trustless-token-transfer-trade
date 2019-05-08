@@ -7,19 +7,11 @@ contract TrustlessTokenTransferTrade {
 
     using SafeMath for uint256;
 
-    event Trade(uint ETH, uint tokens, uint rate); // THINK: rate can be derived.
+    event Trade(uint ETH, uint tokens, uint rate); // THINK: rate can be derived?
     event ExchangeRateUpdated(uint rate);
     ERC20 public token;
     uint public rate;
     uint public validTo;
-
-    // Monday 6th May 2019 (initial deployment)
-    // https://coinmarketcap.com/currencies/kleros/
-    // 1 PNK = 0.00005242 ETH
-    // The inverse. 1 ETH = 19076 PNK
-    // I'm generous, I'm offering slightly better deal
-    // Your 1ETH = 20000 PNK
-    // Always check your rate, trying with small amount first is also a good idea
 
     function transferOwnership(address payable newOwner) public onlyOwner { owner = newOwner; }
     modifier onlyOwner {require(msg.sender == address(owner), "Can only be called by the owner."); _;}
@@ -32,6 +24,7 @@ contract TrustlessTokenTransferTrade {
     }
 
     function updateRate(uint _rate, uint _validTo) public onlyOwner {
+        require(_rate > 0, "Rate must be greater than zero");
         rate = _rate;
         validTo = _validTo;
         emit ExchangeRateUpdated(rate);
@@ -47,9 +40,9 @@ contract TrustlessTokenTransferTrade {
             token.transfer(msg.sender, tokensToSend); // sending tokens to sender
             owner.transfer(msg.value); // sending ETH to owner
             emit Trade(msg.value, tokensToSend, rate);
-        } else { // not have enough tokens, send everything and refund the remainng ETH
+        } else { // contract does not have enough tokens, send everything and refund the remainng ETH
             tokensToSend = tokensOwned;
-            uint tokensToSendETHValue = tokensToSend / rate;
+            uint tokensToSendETHValue = tokensToSend.div(rate);
             uint refundValue = msg.value - tokensToSendETHValue;
 
             msg.sender.transfer(refundValue);
@@ -63,9 +56,8 @@ contract TrustlessTokenTransferTrade {
         return validTo > now;
     }
 
-    // TODO: Maybe SelfDestruct? What if I want to reuse it?
-    function withdraw(address recipient, uint amount) public onlyOwner {
-        token.transfer(recipient, amount);
+    function withdraw() public onlyOwner {     // THINK: Maybe SelfDestruct? What if I want to reuse it?
+        token.transfer(owner, token.balanceOf(address(this)));
     }
 
     function getBalance() public view returns(uint) {
