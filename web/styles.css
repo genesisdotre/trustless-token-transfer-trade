@@ -5,10 +5,53 @@ body {
 	font-size: 16px;
 }
 
+.container-main-wrapper {
+	margin: 0 auto;
+	margin-top: 5vh;
+	width: 500px;
+	max-width: 100%;
+}
+
+.longline {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 a {
 	color: yellow;
 }
 
 strong {
 	font-size: 1.2em;
+}
+
+label {
+	margin-top: 10px;
+	display: block;
+}
+
+input[type=text], input[type=number], input[type="submit"] {
+	padding: 15px;
+	font-size: 1.8em;
+	width: 300px;
+	height: 44px;
+	font-family: monospace;
+}
+input[type=text]#validTo {
+	font-size: 1.2em;
+}
+input.error {
+	border: 2px solid red;
+    background: pink;
+}
+
+input[readonly] {
+	background: #aaa;
+}
+
+input[type=submit] {
+	height: 78px;
+    width: 333px;
+    font-weight: bold;
 }

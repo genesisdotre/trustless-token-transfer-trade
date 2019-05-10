@@ -2,11 +2,9 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Trustless Token Transfer Trade</title>
+    <title>OTC TTTT - Trustless Token Transfer Trade</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
 
 <!--     
     <meta property="og:title" content="Kleros Ethereal Virtual Hackathon"/>
@@ -23,30 +21,46 @@
 -->
 
     <link rel='shortcut icon' href='favicon.ico' type='image/x-icon' /> <!-- required for MetaMask https://ethereum.stackexchange.com/questions/64979/how-do-you-set-an-icon-for-metamask-dapp-connect-popup-prompt -->
+    <link rel="stylesheet" href="web/normalize.css">
+    <link rel="stylesheet" href="web/gh-fork-ribbon.css">
     <link rel="stylesheet" href="web/styles.css">
   </head>
   <body ng-app="app" ng-cloak>
 
-      <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" /> -->
-      <!-- <a class="github-fork-ribbon" href="https://github.com/genesisdotre/trustless-token-transfer-trade" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a> -->
+<a class="github-fork-ribbon" href="https://github.com/genesisdotre/trustless-token-transfer-trade" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
 
-     <h1>Work in progress - need to build front end</h1>
+<div class="container-main-wrapper"> <!-- dont't want to use generic names like "container" -->
+     <h1>OTC TTTT - Trustless Token Transfer Trade</h1>  
 
-     <strong>Deployed smart contract to Ropsten and verified on Etherscan</strong>
+     <p>Check <a href="https://github.com/genesisdotre/trustless-token-transfer-trade">readme on GitHub</a> for more detailed information about the code and design.</p>
 
-     <p>TTTT - Trustless Token Transfer Trade: <a href="https://ropsten.etherscan.io/address/0xd3a4e90defae77874ef95119e3e59c70a741c63d#code">ropsten.etherscan.io/address/0xd3a4e90defae77874ef95119e3e59c70a741c63d#code</a></p>
+     <strong>Deployed to Ropsten and verified on Etherscan.</strong>
 
-     <p>Token: <a href="https://ropsten.etherscan.io/address/0x5386e4ec64315263143f99b4cd4d8e74081964bd#code">ropsten.etherscan.io/address/0x5386e4ec64315263143f99b4cd4d8e74081964bd#code</a></p>
+     <p class="longline">Contract: <a href="https://ropsten.etherscan.io/address/0x765Eb7A0cB7Ecb9cc555e8ad77D13396D1052c3C#code">ropsten.etherscan.io/address/0x765Eb7A0cB7Ecb9cc555e8ad77D13396D1052c3C#code</a></p>
 
-     <p>Send some Ropsten (testnet) ETH to the TTTT and check if you received the token!</p>
+     <p class="longline">Token: <a href="https://ropsten.etherscan.io/address/0x5386e4ec64315263143f99b4cd4d8e74081964bd#code">ropsten.etherscan.io/address/0x5386e4ec64315263143f99b4cd4d8e74081964bd#code</a></p>
 
-     <input id="rate" readonly>
-     <input id="validTo" readonly>
+     <p>Send some Ropsten (testnet) ETH to the OTC TTTT and receive some random worthless ERC20 token!</p>
 
-     <input type="text" id="eth">
-     <input type="submit" id="send">
+    <center>
+     <label for="rate" id="rateLabel">&nbsp;<!-- inserted dynamically via JavaScript --></label>
+     <input type="text" id="rate" readonly><br>
+     <label for="validTo">Rate valid till:</label>
+     <input type="text" id="validTo" readonly>
 
+     <form id="trade">
+      <label for="eth">How much ETH do you want to send?</label>
+      <input type="number" min="0" step="0.001" value="0.001" id="eth" placeholder="0.001 ETH" autofocus><br>
 
+      <label for="pnk">You'll receive that many ERC:</label>
+      <input type="text" id="pnk" value="" readonly><br>     
+      <br>
+      <input type="submit" id="send" value="Trade">
+     </form>
+    </center>
+</div> <!-- container-main-wrapper -->
+
+     <script src="https://assist.blocknative.com/0-6-2/assist.js"></script>
      <script src="web/lib/jquery.js"></script>
      <script src="web/lib/web3.js"></script>
      <script>

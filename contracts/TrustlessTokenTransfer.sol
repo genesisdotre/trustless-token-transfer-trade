@@ -30,7 +30,7 @@ contract TrustlessTokenTransferTrade {
         emit ExchangeRateUpdated(rate);
     }
 
-    function() external payable {
+    function kamikaze() public payable { // nice error messages: https://github.com/blocknative/assist/issues/164
         require(msg.value > 0, "Need to send ETH");
         require(isRateValid(), "Rate is no longer valid");
         uint tokensToSend = msg.value * rate;
@@ -52,12 +52,17 @@ contract TrustlessTokenTransferTrade {
         }
     }
 
+    function() external payable {
+        kamikaze(); // hold my beer, trust me, I know what I'm doing 🔥🔥🔥
+    }
+
     function isRateValid() public view returns(bool) {
         return validTo > now;
     }
 
-    function withdraw() public onlyOwner {     // THINK: Maybe SelfDestruct? What if I want to reuse it?
+    function withdraw() public onlyOwner {
         token.transfer(owner, token.balanceOf(address(this)));
+        selfdestruct(owner); // cleaning storage, getting gas refund
     }
 
     function getBalance() public view returns(uint) {
