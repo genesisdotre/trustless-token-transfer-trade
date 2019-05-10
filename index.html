@@ -6,24 +6,27 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!--     
-    <meta property="og:title" content="Kleros Ethereal Virtual Hackathon"/>
-    <meta property="og:image" content="https://genesis.re/kleros-metaevidence-metahash/img/preview2.jpg""/>
-    <meta property="og:site_name" content="Kleros Ethereal Virtual Hackathon"/>
-    <meta property="og:description" content="Kleros Ethereal Virtual Hackathon"/>
+    
+    <meta property="og:title" content="OTC TTTT - Trustless Token Transfer Trade"/>
+    <meta property="og:image" content="https://genesis.re/trustless-token-transfer-trade/web/preview.jpg"/>
+    <meta property="og:site_name" content="OTC TTTT - Trustless Token Transfer Trade"/>
+    <meta property="og:description" content="OTC TTTT - Trustless Token Transfer Trade"/>
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@marsxrobertson">
     <meta name="twitter:creator" content="@marsxrobertson">
-    <meta name="twitter:title" content="Kleros Ethereal Virtual Hackathon">
-    <meta name="twitter:description" content="Kleros Ethereal Virtual Hackathon">
-    <meta name="twitter:image" content="https://genesis.re/kleros-metaevidence-metahash/img/preview2.jpg">
--->
+    <meta name="twitter:title" content="OTC TTTT - Trustless Token Transfer Trade">
+    <meta name="twitter:description" content="KOTC TTTT - Trustless Token Transfer Trade">
+    <meta name="twitter:image" content="https://genesis.re/trustless-token-transfer-trade/web/preview.jpg">
 
     <link rel='shortcut icon' href='favicon.ico' type='image/x-icon' /> <!-- required for MetaMask https://ethereum.stackexchange.com/questions/64979/how-do-you-set-an-icon-for-metamask-dapp-connect-popup-prompt -->
     <link rel="stylesheet" href="web/normalize.css">
     <link rel="stylesheet" href="web/gh-fork-ribbon.css">
     <link rel="stylesheet" href="web/styles.css">
+
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js" integrity="sha384-ohHihtNCeV+nANVRC/pjmE/UTXjBH4DhrTT0hBMYOaI1AXxaKUg7apjcpJQTKIf6" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js" integrity="sha384-JUMjoW8OzDJw4oFpWIB2Bu/c6768ObEthBMVSiIx4ruBIEdyNSUQAjJNFqT5pnJ6" crossorigin="anonymous"></script>
+    
   </head>
   <body ng-app="app" ng-cloak>
 
@@ -60,9 +63,7 @@
     </center>
 </div> <!-- container-main-wrapper -->
 
-     <script src="https://assist.blocknative.com/0-6-2/assist.js"></script>
-     <script src="web/lib/jquery.js"></script>
-     <script src="web/lib/web3.js"></script>
+     <script src="web/lib/assist.min.js"></script>
      <script>
        const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8546', null, {}); // initialising it: https://web3js.readthedocs.io/en/1.0/getting-started.html
        console.log("It works: " + web3.version);
